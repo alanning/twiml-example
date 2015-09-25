@@ -10,7 +10,8 @@ handlers.voice = function (params, req, res, next) {
   var twilio = Twilio,
       sig = req.headers['x-twilio-signature'],
       url,
-      resp
+      resp,
+      msg
 
   console.log('[twilio] headers:', JSON.stringify(req.headers));
   console.log('[twilio] body:', req.body)
@@ -24,7 +25,14 @@ handlers.voice = function (params, req, res, next) {
   //url = 'http://' + req.headers.host + req.url
 
   resp = new twilio.TwimlResponse()
-  resp.say({voice: 'man'}, 'Hello, thanks for using Meteor and Twilio!')
+  msg = 'Hello, thanks for using Meteor and Twilio! ' +
+        'Here is another sentence for you with a period at the end. ' +
+        'You should have noticed a slight pause at punctuation mark. ' +
+        'This message should repeat twice. .'
+
+  resp.say({voice: 'man', loop: 2}, msg)
+      .pause({length: 1})
+      .say({voice: 'man'}, "Goodbye!")
 
   res.statusCode = 200
   res.setHeader("Content-Type", "text/xml")
